@@ -2,7 +2,7 @@
 // Arduino control of NeoPixel strips via MIDI.
 // By Leif Bloomquist
 
-#include <MIDI.h>
+#include <MIDI.h>   // Use1ByteParsing?
 #include <Adafruit_NeoPixel.h>
 #include <HardwareSerial.h>     // Need to increase the buffer size in here?
 
@@ -16,7 +16,8 @@
 #define CHANNEL_BLUE  3
 #define CHANNEL_WHITE 4
 
-#define CC_BRIGHTNESS 74
+#define CC_BRIGHTNESS_RIGHT 74
+#define CC_BRIGHTNESS_LEFT  75
 
 // Parameter 1 = number of pixels in strip
 // Parameter 2 = Arduino pin number (most are valid)
@@ -171,16 +172,21 @@ void HandleControlChange(byte channel, byte number, byte value)
 {
     switch (number)
     {
-        case CC_BRIGHTNESS:
-            HandleBrightness(channel, value * 2);
+        case CC_BRIGHTNESS_RIGHT:
+            HandleBrightnessRight(channel, value * 2);
             break;
+
+        case CC_BRIGHTNESS_LEFT:
+            HandleBrightnessLeft(channel, value * 2);
+            break;
+
 
         default:  // Ignore all others
             return;
     }
 }
 
-void HandleBrightness(byte channel, byte brightness)
+uint32_t CalculateBrightness(byte channel, byte brightness)
 {
     byte red = 0;
     byte green = 0;
@@ -188,31 +194,50 @@ void HandleBrightness(byte channel, byte brightness)
 
     switch (channel)
     {
-        case CHANNEL_RED:
-            red = brightness;
-            break;
+    case CHANNEL_RED:
+        red = brightness;
+        break;
 
-        case CHANNEL_GREEN:
-            green = brightness;
-            break;
+    case CHANNEL_GREEN:
+        green = brightness;
+        break;
 
-        case CHANNEL_BLUE:
-            blue = brightness;
-            break;
+    case CHANNEL_BLUE:
+        blue = brightness;
+        break;
 
-        case CHANNEL_WHITE:
-            red = brightness;
-            green = brightness;
-            blue = brightness;
-            break;
+    case CHANNEL_WHITE:
+        red = brightness;
+        green = brightness;
+        blue = brightness;
+        break;
 
-        default:  // Ignore all others
-            return;
+    default:  // Ignore all others (black)
+        return 0;
     }
+
+    return right_strip.Color(red, green, blue);
+}
+
+void HandleBrightnessRight(byte channel, byte brightness)
+{
+    uint32_t color = CalculateBrightness(channel, brightness);
 
     for (int i = 0; i < NUM_PIXELS; i++)
     {
-        left_strip.setPixelColor(i, red, green, blue);
+        right_strip.setPixelColor(i, color);
+    }
+    changed = true;
+}
+
+
+void HandleBrightnessLeft (byte channel, byte brightness)
+{
+    uint32_t color = CalculateBrightness(channel, brightness);
+
+    for (int i = 0; i < NUM_PIXELS; i++)
+    {
+        left_strip.setPixelColor(i, color);
     }
     changed = true;
 }
