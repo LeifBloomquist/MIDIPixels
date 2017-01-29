@@ -4,14 +4,19 @@
 
 #include <MIDI.h>
 #include <Adafruit_NeoPixel.h>
+#include <HardwareSerial.h>     // Need to increase the buffer size in here?
 
 #define RIGHT_PIN 2
 #define LEFT_PIN  3
+
+#define NUM_PIXELS  60   // Per side!
 
 #define CHANNEL_RED   1
 #define CHANNEL_GREEN 2
 #define CHANNEL_BLUE  3
 #define CHANNEL_WHITE 4
+
+#define CC_BRIGHTNESS 74
 
 // Parameter 1 = number of pixels in strip
 // Parameter 2 = Arduino pin number (most are valid)
@@ -20,10 +25,12 @@
 //   NEO_KHZ400  400 KHz (classic 'v1' (not v2) FLORA pixels, WS2811 drivers)
 //   NEO_GRB     Pixels are wired for GRB bitstream (most NeoPixel products)
 //   NEO_RGB     Pixels are wired for RGB bitstream (v1 FLORA pixels, not v2)
-Adafruit_NeoPixel right_strip = Adafruit_NeoPixel(60, RIGHT_PIN, NEO_GRB + NEO_KHZ800);
-Adafruit_NeoPixel left_strip  = Adafruit_NeoPixel(60, LEFT_PIN,  NEO_GRB + NEO_KHZ800);
+Adafruit_NeoPixel right_strip = Adafruit_NeoPixel(NUM_PIXELS, RIGHT_PIN, NEO_GRB + NEO_KHZ800);
+Adafruit_NeoPixel left_strip  = Adafruit_NeoPixel(NUM_PIXELS, LEFT_PIN,  NEO_GRB + NEO_KHZ800);
 
-MIDI_CREATE_DEFAULT_INSTANCE();  // Baud rate needs to be changed to 38400 in midi_Settings.h !!!!
+MIDI_CREATE_DEFAULT_INSTANCE();  // Baud rate needs to be changed to 38400/115200 in midi_Settings.h !!!!   Hairless MIDI must match
+
+boolean changed = false;
 
 // ----------------------------------------------------------------------------
 
@@ -33,15 +40,24 @@ void setup()
 
     right_strip.begin();
     left_strip.begin();
-
     PixelRefresh();
+
+    Pulse();
 }
 
 void loop()
 {
     // Don't do a heck of a lot here.  All the fun stuff is done in the MIDI handlers.
+    changed = false;
+
     // Call MIDI.read the fastest you can for real-time performance.
     MIDI.read();
+
+    if (changed)
+    {
+        PixelRefresh();
+        changed = false;
+    }
 }
 
 // ----------------------------------------------------------------------------
@@ -50,6 +66,7 @@ void MIDIsetup()
 {
     // Initiate MIDI communications, listen to all channels
     MIDI.begin(MIDI_CHANNEL_OMNI);
+    Serial.begin(115200);
 
     // No MIDIThru
     MIDI.turnThruOff();
@@ -76,7 +93,7 @@ void HandleNoteOn(byte channel, byte note, byte velocity)
         return;
     }
 
-    note &= 0x7F;
+    byte brightness = velocity << 2;  // 0 to 254
 
     uint32_t current_color = left_strip.getPixelColor(note);
    
@@ -87,36 +104,34 @@ void HandleNoteOn(byte channel, byte note, byte velocity)
     switch (channel)
     {
         case CHANNEL_RED:
-            red = velocity;
+            red = brightness;
             break;
 
         case CHANNEL_GREEN:
-            green = velocity;
+            green = brightness;
             break;
 
         case CHANNEL_BLUE:
-            blue = velocity;
+            blue = brightness;
             break;
 
         case CHANNEL_WHITE:
-            red = velocity;
-            green = velocity;
-            blue = velocity;
+            red = brightness;
+            green = brightness;
+            blue = brightness;
             break;
 
-        default:  // Ignore
+        default:  // Ignore all others
             return;
     }
 
     left_strip.setPixelColor(note, red, green, blue);
-    PixelRefresh();
+    changed = true;
 }
 
 // -----------------------------------------------------------------------------
 void HandleNoteOff(byte channel, byte note, byte velocity)
 {
-    note &= 0x7F;
-
     uint32_t current_color = left_strip.getPixelColor(note);
 
     byte red = (current_color >> 16) & 0xFF;
@@ -143,19 +158,95 @@ void HandleNoteOff(byte channel, byte note, byte velocity)
             blue = 0;
             break;
 
-        default:  // Ignore
+        default:  // Ignore all others
             return;
     }
 
     left_strip.setPixelColor(note, red, green, blue);
-    PixelRefresh();
+    changed = true;
 }
 
 
 void HandleControlChange(byte channel, byte number, byte value)
 {
+    switch (number)
+    {
+        case CC_BRIGHTNESS:
+            HandleBrightness(channel, value * 2);
+            break;
 
+        default:  // Ignore all others
+            return;
+    }
 }
 
+void HandleBrightness(byte channel, byte brightness)
+{
+    byte red = 0;
+    byte green = 0;
+    byte blue = 0;
+
+    switch (channel)
+    {
+        case CHANNEL_RED:
+            red = brightness;
+            break;
+
+        case CHANNEL_GREEN:
+            green = brightness;
+            break;
+
+        case CHANNEL_BLUE:
+            blue = brightness;
+            break;
+
+        case CHANNEL_WHITE:
+            red = brightness;
+            green = brightness;
+            blue = brightness;
+            break;
+
+        default:  // Ignore all others
+            return;
+    }
+
+    for (int i = 0; i < NUM_PIXELS; i++)
+    {
+        left_strip.setPixelColor(i, red, green, blue);
+    }
+    changed = true;
+}
+
+void Pulse()
+{
+    for (byte bright = 0; bright < 250; bright +=5)
+    {
+        for (int i = 0; i < NUM_PIXELS; i++)
+        {
+            left_strip.setPixelColor(i, bright, bright, bright);
+            right_strip.setPixelColor(i, bright, bright, bright);
+        }       
+        PixelRefresh();
+    }
+
+    for (byte bright = 250; bright > 0; bright -= 5)
+    {
+        for (int i = 0; i < NUM_PIXELS; i++)
+        {
+            left_strip.setPixelColor(i, bright, bright, bright);
+            right_strip.setPixelColor(i, bright, bright, bright);
+        }        
+        PixelRefresh();
+    }
+
+    ClearAllPixels();
+}
+
+void ClearAllPixels()
+{
+    left_strip.clear();
+    right_strip.clear();
+    PixelRefresh();
+}
 
 // EOF
