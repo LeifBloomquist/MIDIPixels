@@ -17,4 +17,9 @@
   <ItemGroup>
     <None Include="MIDIPixels.ino" />
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="__vm\.MIDIPixels.vsarduino.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
 </Project>
