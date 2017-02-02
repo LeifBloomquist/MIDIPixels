@@ -14,6 +14,10 @@
 
 SoftwareSerial softSerial(A0, A1); // RX, TX
 
+byte status = 0;
+byte data1 = 0;
+byte data2 = 0;
+
 // ----------------------------------------------------------------------------
 
 void setup()
@@ -34,16 +38,29 @@ void setup()
 }
 
 void loop()
-{    
-    // 1. Wait for the signal from the slave (positive edge)   
-    while (digitalRead(SIGNAL_PIN) == LOW) {} 
+{
+    // 1. Wait for the signal from the slave (positive edge). 
+    while (digitalRead(SIGNAL_PIN) == LOW) {}
 
     digitalWriteFast(LED_PIN, HIGH);
 
-    // 2. Send three bytes (dummy for now)
-    softSerial.write(0x90);
-    softSerial.write(0x04);
-    softSerial.write(0x7F);    
+    // 2. Wait for MIDI data (may already be buffered)
+    while (true)
+    {
+        status = ReadByte(Serial);   // Wait for any byte
+
+        if ((status & 0x80) > 0)     // Status Byte detected
+        {
+            data1 = ReadByte(Serial);  // Read following data bytes
+            data2 = ReadByte(Serial);
+            break;
+        }
+    }
+
+    // 3. Send the three bytes
+    softSerial.write(status);
+    softSerial.write(data1);
+    softSerial.write(data2);    
 
     digitalWriteFast(LED_PIN, LOW);
 
@@ -55,19 +72,10 @@ void MIDIsetup()
     Serial.begin(115200);
 }
 
-/*
-inline void ParseMIDI(byte* buffer, int num)
+int ReadByte(Stream& in)
 {
-for (int i = 0; i < num; i++)
-{
-if ((buffer[i] & 0x80) > 0)  // Status Byte
-{
-HandleMIDI(buffer[i], buffer[i + 1], buffer[i + 2]);
-i += 2;
+    while (in.available() == 0) {}
+    return in.read();
 }
-}
-}
-*/
-
 
 // EOF
