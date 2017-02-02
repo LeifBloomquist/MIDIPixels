@@ -1,13 +1,10 @@
 // -------------------------------------------------------------
 // Arduino control of NeoPixel strips via MIDI.
 
-// MIDI MASTER!  This Arduino receives and buffers the MIDI to send to the Slave
+// MIDI "MASTER"!  This Arduino receives and buffers the MIDI to send to the Slave when it is ready
 
 #include <SoftwareSerial.h> 
 #include <digitalWriteFast.h>
-
-#define LEFT_PIN  11
-#define RIGHT_PIN 12
 
 #define SIGNAL_PIN 7
 #define LED_PIN   13
@@ -15,8 +12,8 @@
 SoftwareSerial softSerial(A0, A1); // RX, TX
 
 byte status = 0;
-byte data1 = 0;
-byte data2 = 0;
+byte data1  = 0;
+byte data2  = 0;
 
 // ----------------------------------------------------------------------------
 
@@ -31,7 +28,7 @@ void setup()
 
     pinModeFast(SIGNAL_PIN, INPUT);
 
-    // 2. Send three bytes (dummy for now)
+    // Send three bytes (dummy for now) to ensure slave is ready
     softSerial.write(0x80);
     softSerial.write(0x05);
     softSerial.write(0x7F);

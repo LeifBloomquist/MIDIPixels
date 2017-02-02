@@ -1,7 +1,7 @@
 // -------------------------------------------------------------
 // Arduino control of NeoPixel strips via MIDI.
 
-// MIDI SLAVE!  This Arduino controls the NeoPixels.
+// MIDI "SLAVE!"  This Arduino controls the NeoPixels.
 
 #include <Adafruit_NeoPixel.h>
 #include <SoftwareSerial.h> 
@@ -59,10 +59,10 @@ void loop()
     digitalWriteFast(SIGNAL_PIN, HIGH);
     digitalWriteFast(LED_PIN, HIGH);
 
-    // 2. Wait for exactly three bytes.  TODO - Timeout
+    // 2. Wait for exactly three bytes.  
     while (softSerial.available() < 3)
     {
-        ;
+        ;   // TODO - Timeout detection?
     }
 
     // 3. Tell other side to wait again
@@ -101,20 +101,6 @@ void MIDIsetup()
 {
     Serial.begin(115200);
 }
-
-/*
-inline void ParseMIDI(byte* buffer, int num)
-{
-    for (int i = 0; i < num; i++)
-    {
-        if ((buffer[i] & 0x80) > 0)  // Status Byte
-        {
-            HandleMIDI(buffer[i], buffer[i + 1], buffer[i + 2]);
-            i += 2;
-        }
-    }
-}
-*/
 
 inline void HandleMIDI(byte status, byte data1, byte data2)
 {
