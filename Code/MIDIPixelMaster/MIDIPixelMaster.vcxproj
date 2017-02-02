@@ -11,10 +11,10 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{C5F80730-F44F-4478-BDAE-6634EFC2CA88}</ProjectGuid>
+    <ProjectGuid>{0FFD72EB-68B1-419E-9CCB-FAE61A436B7C}</ProjectGuid>
     <RootNamespace>
     </RootNamespace>
-    <ProjectName>MIDIPixels</ProjectName>
+    <ProjectName>MIDIPixelMaster</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -48,8 +48,8 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\..\..\..\..\Users\Leif\Documents\Arduino\libraries\Adafruit_NeoPixel;$(ProjectDir)..\..\..\..\..\Program Files (x86)\Arduino\arduino-1.6.9\libraries;$(ProjectDir)..\..\..\..\..\Program Files (x86)\Arduino\arduino-1.6.9\hardware\arduino\avr\libraries;$(ProjectDir)..\..\..\..\..\Users\Leif\Documents\Arduino\libraries;$(ProjectDir)..\..\..\..\..\Program Files (x86)\Arduino\arduino-1.6.9\hardware\arduino\avr\cores\arduino;$(ProjectDir)..\..\..\..\..\Program Files (x86)\Arduino\arduino-1.6.9\hardware\arduino\avr\variants\eightanaloginputs;$(ProjectDir)..\MIDIPixels;$(ProjectDir)..\..\..\..\..\Program Files (x86)\Arduino\arduino-1.6.9\hardware\tools\avr\avr\include\;$(ProjectDir)..\..\..\..\..\Program Files (x86)\Arduino\arduino-1.6.9\hardware\tools\avr\avr\include\avr\;$(ProjectDir)..\..\..\..\..\Program Files (x86)\Arduino\arduino-1.6.9\hardware\tools\avr\lib\gcc\avr\4.8.1\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <ForcedIncludeFiles>$(ProjectDir)__vm\.MIDIPixels.vsarduino.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\..\..\..\..\Program Files (x86)\Arduino\arduino-1.6.9\hardware\arduino\avr\libraries\SoftwareSerial\src;$(ProjectDir)..\..\..\..\..\Users\Leif\Documents\Arduino\libraries\digitalWriteFast;$(ProjectDir)..\..\..\..\..\Program Files (x86)\Arduino\arduino-1.6.9\libraries;$(ProjectDir)..\..\..\..\..\Program Files (x86)\Arduino\arduino-1.6.9\hardware\arduino\avr\libraries;$(ProjectDir)..\..\..\..\..\Users\Leif\Documents\Arduino\libraries;$(ProjectDir)..\..\..\..\..\Program Files (x86)\Arduino\arduino-1.6.9\hardware\arduino\avr\cores\arduino;$(ProjectDir)..\..\..\..\..\Program Files (x86)\Arduino\arduino-1.6.9\hardware\arduino\avr\variants\eightanaloginputs;$(ProjectDir)..\MIDIPixelMaster;$(ProjectDir)..\..\..\..\..\Program Files (x86)\Arduino\arduino-1.6.9\hardware\tools\avr\avr\include\;$(ProjectDir)..\..\..\..\..\Program Files (x86)\Arduino\arduino-1.6.9\hardware\tools\avr\avr\include\avr\;$(ProjectDir)..\..\..\..\..\Program Files (x86)\Arduino\arduino-1.6.9\hardware\tools\avr\lib\gcc\avr\4.8.1\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <ForcedIncludeFiles>$(ProjectDir)__vm\.MIDIPixelMaster.vsarduino.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
       <IgnoreStandardIncludePath>false</IgnoreStandardIncludePath>
       <PreprocessorDefinitions>__AVR_ATmega328p__;__AVR_ATmega328P__;F_CPU=16000000L;ARDUINO=10609;ARDUINO_AVR_NANO;ARDUINO_ARCH_AVR;__cplusplus=201103L;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
@@ -75,15 +75,12 @@
     <ProjectCapability Include="VisualMicro" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="MIDIPixels.ino">
-      <FileType>CppCode</FileType>
-    </None>
-    <None Include="MIDIPixelsMIDITest.inozzz">
+    <None Include="MIDIPixelMaster.ino">
       <FileType>CppCode</FileType>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="__vm\.MIDIPixels.vsarduino.h" />
+    <ClInclude Include="__vm\.MIDIPixelMaster.vsarduino.h" />
   </ItemGroup>
   <PropertyGroup>
     <DebuggerFlavor>VisualMicroDebugger</DebuggerFlavor>

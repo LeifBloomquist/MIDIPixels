@@ -1,24 +1,26 @@
 // -------------------------------------------------------------
 // Arduino control of NeoPixel strips via MIDI.
 
-//#include <MIDI.h>               // Use1ByteParsing set to false, and BaudRate set to 115200
-#include <Adafruit_NeoPixel.h>
-//#include <FastLED-3.1.3\FastLED.h>
-#include <HardwareSerial.h>     // Increased the buffer size to 1024
+// MIDI SLAVE!  This Arduino controls the NeoPixels.
 
-#define PIN 11
-#define DEBUG_PIN 12
+#include <Adafruit_NeoPixel.h>
+#include <SoftwareSerial.h> 
+#include <digitalWriteFast.h>
+
+#define LEFT_PIN  11
+#define RIGHT_PIN 12
+
+#define SIGNAL_PIN 7
+#define LED_PIN   13
 
 #define NUM_PIXELS  60  
 
-#define CHANNEL_RED   1
-#define CHANNEL_GREEN 2
-#define CHANNEL_BLUE  3
-#define CHANNEL_WHITE 4
+#define CHANNEL_RED   0   // MIDI Channel 1
+#define CHANNEL_GREEN 1   // MIDI Channel 2
+#define CHANNEL_BLUE  2   // MIDI Channel 3
+#define CHANNEL_WHITE 3   // MIDI Channel 4
 
 #define CC_BRIGHTNESS 74
-
-#define OFFSET 1  // 1 for my handler, 0 for MIDI
 
 // Parameter 1 = number of pixels in strip
 // Parameter 2 = Arduino pin number (most are valid)
@@ -27,16 +29,10 @@
 //   NEO_KHZ400  400 KHz (classic 'v1' (not v2) FLORA pixels, WS2811 drivers)
 //   NEO_GRB     Pixels are wired for GRB bitstream (most NeoPixel products)
 //   NEO_RGB     Pixels are wired for RGB bitstream (v1 FLORA pixels, not v2)
-Adafruit_NeoPixel debug_strip = Adafruit_NeoPixel(NUM_PIXELS, DEBUG_PIN, NEO_GRB + NEO_KHZ800);
-Adafruit_NeoPixel left_strip = Adafruit_NeoPixel(NUM_PIXELS, PIN, NEO_GRB + NEO_KHZ800);
-//
-//CRGB leds[NUM_PIXELS];
+Adafruit_NeoPixel right_strip = Adafruit_NeoPixel(NUM_PIXELS, RIGHT_PIN, NEO_GRB + NEO_KHZ800);
+Adafruit_NeoPixel left_strip  = Adafruit_NeoPixel(NUM_PIXELS, LEFT_PIN,  NEO_GRB + NEO_KHZ800);
 
-boolean changed = false;
-
-// Implement my own #&*$ bufffer!
-byte mybuffer[3 * 200] = { 0 };
-int index = 0;
+SoftwareSerial softSerial(A0, A1); // RX, TX
 
 // ----------------------------------------------------------------------------
 
@@ -44,39 +40,53 @@ void setup()
 {
     MIDIsetup();
     left_strip.begin();
-    debug_strip.begin();
+    right_strip.begin();
     PixelRefresh();
+
+    Serial.begin(115200);
+    softSerial.begin(57600);
+
+    pinModeFast(LED_PIN, OUTPUT);
+    digitalWriteFast(LED_PIN, HIGH);
+
+    pinModeFast(SIGNAL_PIN, OUTPUT);
+    digitalWriteFast(SIGNAL_PIN, HIGH);
 }
 
 void loop()
 {
-    debug_strip.clear();
-    debug_strip.setPixelColor(0, 0, 50, 0);
- 
-    // Don't do a heck of a lot here.  All the fun stuff is done in the MIDI handlers.
-    changed = false;
+    // 1. Set the signal high to tell the other side to send a single MIDI message.
+    digitalWriteFast(SIGNAL_PIN, HIGH);
+    digitalWriteFast(LED_PIN, HIGH);
 
-    // Read all data
-    index = 0;
-
-    while (Serial.available() > 0)
-    {  
-        mybuffer[index++] = Serial.read();
-        debug_strip.setPixelColor(7, index, 0, 0);
-    }
-
-    debug_strip.setPixelColor(1, 0, 0, 20);
-    PixelRefresh();
-
-    ParseMIDI(mybuffer, index);
-    
-   
-    // Only update NeoPixels if no data, and pattern has changed.
-//    if (changed)
+    // 2. Wait for exactly three bytes.  TODO - Timeout
+    while (softSerial.available() < 3)
     {
- //       PixelRefresh();
- //       changed = false;
+        ;
     }
+
+    // 3. Tell other side to wait again
+    digitalWriteFast(SIGNAL_PIN, LOW);
+    digitalWriteFast(LED_PIN, LOW);
+
+    // 4. Parse the data
+    byte status = softSerial.read();
+    byte data1  = softSerial.read();
+    byte data2  = softSerial.read();
+
+    /*
+    Serial.print("status=");  Serial.println(status, 16);
+    Serial.print("data1=");  Serial.println(data1, 16);
+    Serial.print("data2=");  Serial.println(data2, 16);
+    Serial.println();
+    */
+    
+    HandleMIDI(status, data1, data2);
+
+    // 5. Refresh the NeoPixels while no data is coming in
+    PixelRefresh();
+      
+    // 6. GOTO 1
 }
 
 // ----------------------------------------------------------------------------
@@ -84,7 +94,7 @@ void loop()
 inline void PixelRefresh()
 {
     left_strip.show();
-    debug_strip.show();
+    right_strip.show();
 }
 
 void MIDIsetup()
@@ -92,6 +102,7 @@ void MIDIsetup()
     Serial.begin(115200);
 }
 
+/*
 inline void ParseMIDI(byte* buffer, int num)
 {
     for (int i = 0; i < num; i++)
@@ -103,25 +114,26 @@ inline void ParseMIDI(byte* buffer, int num)
         }
     }
 }
+*/
 
 inline void HandleMIDI(byte status, byte data1, byte data2)
 {
     switch (status & 0xF0)
     {
-        case 0x90:
-            HandleNoteOn(status & 0x0F, data1, data2);
-            break;
+    case 0x90:
+        HandleNoteOn(status & 0x0F, data1, data2);
+        break;
 
-        case 0x80:
-            HandleNoteOff(status & 0x0F, data1, data2);
-            break;
+    case 0x80:
+        HandleNoteOff(status & 0x0F, data1, data2);
+        break;
 
-        case 0xB0:
-            HandleControlChange(status & 0x0F, data1, data2);
-            break;
+    case 0xB0:
+        HandleControlChange(status & 0x0F, data1, data2);
+        break;
 
-        default:  // Ignore all others
-            break;
+    default:  // Ignore all others
+        break;
     }
 }
 
@@ -142,9 +154,9 @@ void HandleNoteOn(byte channel, byte note, byte velocity)
 
     byte red = (current_color >> 16) & 0xFF;
     byte green = (current_color >> 8) & 0xFF;
-    byte blue = (current_color)& 0xFF;
+    byte blue = (current_color) & 0xFF;
 
-    switch (channel + OFFSET)
+    switch (channel)
     {
     case CHANNEL_RED:
         red = brightness;
@@ -169,7 +181,6 @@ void HandleNoteOn(byte channel, byte note, byte velocity)
     }
 
     left_strip.setPixelColor(note, red, green, blue);
-    changed = true;
 }
 
 // -----------------------------------------------------------------------------
@@ -179,9 +190,9 @@ void HandleNoteOff(byte channel, byte note, byte velocity)
 
     byte red = (current_color >> 16) & 0xFF;
     byte green = (current_color >> 8) & 0xFF;
-    byte blue = (current_color)& 0xFF;
+    byte blue = (current_color) & 0xFF;
 
-    switch (channel + OFFSET)
+    switch (channel)
     {
     case CHANNEL_RED:
         red = 0;
@@ -206,7 +217,6 @@ void HandleNoteOff(byte channel, byte note, byte velocity)
     }
 
     left_strip.setPixelColor(note, red, green, blue);
-    changed = true;
 }
 
 
@@ -214,12 +224,12 @@ void HandleControlChange(byte channel, byte number, byte value)
 {
     switch (number)
     {
-        case CC_BRIGHTNESS:
-            HandleBrightness(channel, value * 2);
-            break;
+    case CC_BRIGHTNESS:
+        HandleBrightness(channel, value * 2);
+        break;
 
-        default:  // Ignore all others
-            return;
+    default:  // Ignore all others
+        return;
     }
 }
 
@@ -229,7 +239,7 @@ uint32_t HandleBrightness(byte channel, byte brightness)
     byte green = 0;
     byte blue = 0;
 
-    switch (channel + OFFSET)
+    switch (channel)
     {
     case CHANNEL_RED:
         red = brightness;
@@ -257,7 +267,6 @@ uint32_t HandleBrightness(byte channel, byte brightness)
     {
         left_strip.setPixelColor(i, red, green, blue);
     }
-    changed = true;
 }
 
 // EOF

@@ -15,11 +15,10 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <None Include="MIDIPixels.ino" />
-    <None Include="MIDIPixelsMIDITest.inozzz" />
+    <None Include="MIDIPixelSlave.ino" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="__vm\.MIDIPixels.vsarduino.h">
+    <ClInclude Include="__vm\.MIDIPixelSlave.vsarduino.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
