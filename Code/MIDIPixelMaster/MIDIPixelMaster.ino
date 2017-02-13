@@ -6,10 +6,13 @@
 #include <SoftwareSerial.h> 
 #include <digitalWriteFast.h>
 
-#define SIGNAL_PIN 7
-#define LED_PIN   13
+#define RX_PIN        8
+#define TX_PIN        9
 
-SoftwareSerial softSerial(A0, A1); // RX, TX
+#define SIGNAL_PIN    10
+#define LED_PIN       13
+
+SoftwareSerial softSerial(RX_PIN, TX_PIN); // RX, TX
 
 byte status = 0;
 byte data1  = 0;
@@ -30,7 +33,7 @@ void setup()
 
     // Send three bytes (dummy for now) to ensure slave is ready
     softSerial.write(0x80);
-    softSerial.write(0x05);
+    softSerial.write(0x7F);
     softSerial.write(0x7F);
 }
 

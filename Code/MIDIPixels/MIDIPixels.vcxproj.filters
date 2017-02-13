@@ -17,6 +17,7 @@
   <ItemGroup>
     <None Include="MIDIPixels.ino" />
     <None Include="MIDIPixelsMIDITest.inozzz" />
+    <None Include="MIDIPixelsFull.zzz" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="__vm\.MIDIPixels.vsarduino.h">

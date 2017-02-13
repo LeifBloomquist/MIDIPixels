@@ -11,10 +11,10 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{C5F80730-F44F-4478-BDAE-6634EFC2CA88}</ProjectGuid>
+    <ProjectGuid>{0B470771-0D6D-42B8-BBD7-E5A21A7DCB43}</ProjectGuid>
     <RootNamespace>
     </RootNamespace>
-    <ProjectName>MIDIPixels</ProjectName>
+    <ProjectName>MIDIPixels-REMOVE</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -78,6 +78,7 @@
     <None Include="MIDIPixels.ino">
       <FileType>CppCode</FileType>
     </None>
+    <None Include="MIDIPixelsFull.zzz" />
     <None Include="MIDIPixelsMIDITest.inozzz">
       <FileType>CppCode</FileType>
     </None>

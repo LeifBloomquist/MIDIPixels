@@ -6,14 +6,17 @@
 #include <Adafruit_NeoPixel.h>
 #include <SoftwareSerial.h> 
 #include <digitalWriteFast.h>
+                      
+#define LEFT_PIN      11
+#define RIGHT_PIN     12
 
-#define LEFT_PIN  11
-#define RIGHT_PIN 12
+#define RX_PIN        8
+#define TX_PIN        9
 
-#define SIGNAL_PIN 7
-#define LED_PIN   13
+#define SIGNAL_PIN    10
+#define LED_PIN       13
 
-#define NUM_PIXELS  60  
+#define NUM_PIXELS    60  
 
 #define CHANNEL_RED   0   // MIDI Channel 1
 #define CHANNEL_GREEN 1   // MIDI Channel 2
@@ -32,7 +35,7 @@
 Adafruit_NeoPixel right_strip = Adafruit_NeoPixel(NUM_PIXELS, RIGHT_PIN, NEO_GRB + NEO_KHZ800);
 Adafruit_NeoPixel left_strip  = Adafruit_NeoPixel(NUM_PIXELS, LEFT_PIN,  NEO_GRB + NEO_KHZ800);
 
-SoftwareSerial softSerial(A0, A1); // RX, TX
+SoftwareSerial softSerial(RX_PIN, TX_PIN); // RX, TX
 
 // ----------------------------------------------------------------------------
 
@@ -46,18 +49,20 @@ void setup()
     Serial.begin(115200);
     softSerial.begin(57600);
 
-    pinModeFast(LED_PIN, OUTPUT);
-    digitalWriteFast(LED_PIN, HIGH);
-
     pinModeFast(SIGNAL_PIN, OUTPUT);
     digitalWriteFast(SIGNAL_PIN, HIGH);
+
+    pinModeFast(LED_PIN, OUTPUT);
+    digitalWriteFast(LED_PIN, LOW);
+
+    StartupPulse();
 }
 
 void loop()
 {
     // 1. Set the signal high to tell the other side to send a single MIDI message.
     digitalWriteFast(SIGNAL_PIN, HIGH);
-    digitalWriteFast(LED_PIN, HIGH);
+    digitalWriteFast(LED_PIN, LOW);
 
     // 2. Wait for exactly three bytes.  
     while (softSerial.available() < 3)
@@ -67,7 +72,7 @@ void loop()
 
     // 3. Tell other side to wait again
     digitalWriteFast(SIGNAL_PIN, LOW);
-    digitalWriteFast(LED_PIN, LOW);
+    digitalWriteFast(LED_PIN, HIGH);
 
     // 4. Parse the data
     byte status = softSerial.read();
@@ -136,7 +141,7 @@ void HandleNoteOn(byte channel, byte note, byte velocity)
 
     byte brightness = velocity << 2;  // 0 to 254
 
-    uint32_t current_color = left_strip.getPixelColor(note);
+    uint32_t current_color = right_strip.getPixelColor(note);
 
     byte red = (current_color >> 16) & 0xFF;
     byte green = (current_color >> 8) & 0xFF;
@@ -166,13 +171,13 @@ void HandleNoteOn(byte channel, byte note, byte velocity)
         return;
     }
 
-    left_strip.setPixelColor(note, red, green, blue);
+    right_strip.setPixelColor(note, red, green, blue);
 }
 
 // -----------------------------------------------------------------------------
 void HandleNoteOff(byte channel, byte note, byte velocity)
 {
-    uint32_t current_color = left_strip.getPixelColor(note);
+    uint32_t current_color = right_strip.getPixelColor(note);
 
     byte red = (current_color >> 16) & 0xFF;
     byte green = (current_color >> 8) & 0xFF;
@@ -202,7 +207,7 @@ void HandleNoteOff(byte channel, byte note, byte velocity)
         return;
     }
 
-    left_strip.setPixelColor(note, red, green, blue);
+    right_strip.setPixelColor(note, red, green, blue);
 }
 
 
@@ -251,8 +256,38 @@ uint32_t HandleBrightness(byte channel, byte brightness)
 
     for (int i = 0; i < NUM_PIXELS; i++)
     {
-        left_strip.setPixelColor(i, red, green, blue);
+        right_strip.setPixelColor(i, red, green, blue);
     }
+}
+
+void StartupPulse()
+{
+    ClearAllPixels();
+
+    for (int i = 0; i < NUM_PIXELS; i++)
+    {
+        right_strip.setPixelColor(i, 255, 255, 255);
+        PixelRefresh();
+        delay(10);
+        right_strip.setPixelColor(i, 0, 0, 0);
+    }
+
+    for (int i = 0; i < NUM_PIXELS; i++)
+    {
+        left_strip.setPixelColor(i, 255, 255, 255);
+        PixelRefresh();
+        delay(10);
+        left_strip.setPixelColor(i, 0, 0, 0);
+    }
+        
+    ClearAllPixels();
+}
+
+void ClearAllPixels()
+{
+    left_strip.clear();
+    right_strip.clear();
+    PixelRefresh();
 }
 
 // EOF
