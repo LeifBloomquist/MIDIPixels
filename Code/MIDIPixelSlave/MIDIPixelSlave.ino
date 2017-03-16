@@ -6,22 +6,31 @@
 #include <Adafruit_NeoPixel.h>
 #include <SoftwareSerial.h> 
 #include <digitalWriteFast.h>
-                      
-#define LEFT_PIN      11
-#define RIGHT_PIN     12
 
 #define RX_PIN        8
 #define TX_PIN        9
+                      
+#define RIGHT_PIN     11
+#define LEFT_PIN      12
 
 #define SIGNAL_PIN    10
 #define LED_PIN       13
 
 #define NUM_PIXELS    60  
 
-#define CHANNEL_RED   0   // MIDI Channel 1
-#define CHANNEL_GREEN 1   // MIDI Channel 2
-#define CHANNEL_BLUE  2   // MIDI Channel 3
-#define CHANNEL_WHITE 3   // MIDI Channel 4
+#define CHANNEL_BOTH_RED    0   // MIDI Channel 1
+#define CHANNEL_BOTH_GREEN  1   // MIDI Channel 2
+#define CHANNEL_BOTH_BLUE   2   // MIDI Channel 3
+#define CHANNEL_BOTH_WHITE  3   // MIDI Channel 4
+#define CHANNEL_RIGHT_RED   4   // MIDI Channel 5
+#define CHANNEL_RIGHT_GREEN 5   // MIDI Channel 6
+#define CHANNEL_RIGHT_BLUE  6   // MIDI Channel 7
+#define CHANNEL_RIGHT_WHITE 7   // MIDI Channel 8
+#define CHANNEL_LEFT_RED    8   // MIDI Channel 9
+#define CHANNEL_LEFT_GREEN  9   // MIDI Channel 10
+#define CHANNEL_LEFT_BLUE   10  // MIDI Channel 11
+#define CHANNEL_LEFT_WHITE  11  // MIDI Channel 12
+
 
 #define CC_BRIGHTNESS 74
 
@@ -78,13 +87,6 @@ void loop()
     byte status = softSerial.read();
     byte data1  = softSerial.read();
     byte data2  = softSerial.read();
-
-    /*
-    Serial.print("status=");  Serial.println(status, 16);
-    Serial.print("data1=");  Serial.println(data1, 16);
-    Serial.print("data2=");  Serial.println(data2, 16);
-    Serial.println();
-    */
     
     HandleMIDI(status, data1, data2);
 
@@ -139,9 +141,9 @@ void HandleNoteOn(byte channel, byte note, byte velocity)
         return;
     }
 
-    byte brightness = velocity << 2;  // 0 to 254
+    byte brightness = velocity << 1;  // 0 to 254
 
-    uint32_t current_color = right_strip.getPixelColor(note);
+	uint32_t current_color = GetCurrentPixelColor(channel, note);
 
     byte red = (current_color >> 16) & 0xFF;
     byte green = (current_color >> 8) & 0xFF;
@@ -149,19 +151,27 @@ void HandleNoteOn(byte channel, byte note, byte velocity)
 
     switch (channel)
     {
-    case CHANNEL_RED:
+	case CHANNEL_BOTH_RED:
+	case CHANNEL_RIGHT_RED:
+	case CHANNEL_LEFT_RED:
         red = brightness;
         break;
 
-    case CHANNEL_GREEN:
+	case CHANNEL_BOTH_GREEN:
+    case CHANNEL_RIGHT_GREEN:
+	case CHANNEL_LEFT_GREEN:
         green = brightness;
         break;
 
-    case CHANNEL_BLUE:
+	case CHANNEL_BOTH_BLUE:
+    case CHANNEL_RIGHT_BLUE:
+	case CHANNEL_LEFT_BLUE:
         blue = brightness;
         break;
 
-    case CHANNEL_WHITE:
+	case CHANNEL_BOTH_WHITE:
+    case CHANNEL_RIGHT_WHITE:
+	case CHANNEL_LEFT_WHITE:
         red = brightness;
         green = brightness;
         blue = brightness;
@@ -171,13 +181,13 @@ void HandleNoteOn(byte channel, byte note, byte velocity)
         return;
     }
 
-    right_strip.setPixelColor(note, red, green, blue);
+	SetPixelColor(channel, note, red, green, blue);   
 }
 
 // -----------------------------------------------------------------------------
 void HandleNoteOff(byte channel, byte note, byte velocity)
 {
-    uint32_t current_color = right_strip.getPixelColor(note);
+	uint32_t current_color = GetCurrentPixelColor(channel, note);
 
     byte red = (current_color >> 16) & 0xFF;
     byte green = (current_color >> 8) & 0xFF;
@@ -185,19 +195,27 @@ void HandleNoteOff(byte channel, byte note, byte velocity)
 
     switch (channel)
     {
-    case CHANNEL_RED:
+	case CHANNEL_BOTH_RED:
+	case CHANNEL_RIGHT_RED:
+	case CHANNEL_LEFT_RED:
         red = 0;
         break;
 
-    case CHANNEL_GREEN:
+	case CHANNEL_BOTH_GREEN:
+	case CHANNEL_RIGHT_GREEN:
+	case CHANNEL_LEFT_GREEN:
         green = 0;
         break;
 
-    case CHANNEL_BLUE:
+	case CHANNEL_BOTH_BLUE:
+	case CHANNEL_RIGHT_BLUE:
+	case CHANNEL_LEFT_BLUE:
         blue = 0;
         break;
 
-    case CHANNEL_WHITE:
+	case CHANNEL_BOTH_WHITE:
+	case CHANNEL_RIGHT_WHITE:
+	case CHANNEL_LEFT_WHITE:
         red = 0;
         green = 0;
         blue = 0;
@@ -207,7 +225,7 @@ void HandleNoteOff(byte channel, byte note, byte velocity)
         return;
     }
 
-    right_strip.setPixelColor(note, red, green, blue);
+	SetPixelColor(channel, note, red, green, blue);
 }
 
 
@@ -216,7 +234,7 @@ void HandleControlChange(byte channel, byte number, byte value)
     switch (number)
     {
     case CC_BRIGHTNESS:
-        HandleBrightness(channel, value * 2);
+        HandleBrightness(channel, value << 1);
         break;
 
     default:  // Ignore all others
@@ -224,7 +242,7 @@ void HandleControlChange(byte channel, byte number, byte value)
     }
 }
 
-uint32_t HandleBrightness(byte channel, byte brightness)
+void HandleBrightness(byte channel, byte brightness)
 {
     byte red = 0;
     byte green = 0;
@@ -232,62 +250,154 @@ uint32_t HandleBrightness(byte channel, byte brightness)
 
     switch (channel)
     {
-    case CHANNEL_RED:
+	case CHANNEL_BOTH_RED:
+	case CHANNEL_RIGHT_RED:
+	case CHANNEL_LEFT_RED:
         red = brightness;
         break;
 
-    case CHANNEL_GREEN:
+	case CHANNEL_BOTH_GREEN:
+	case CHANNEL_RIGHT_GREEN:
+	case CHANNEL_LEFT_GREEN:
         green = brightness;
         break;
 
-    case CHANNEL_BLUE:
+	case CHANNEL_BOTH_BLUE:
+	case CHANNEL_RIGHT_BLUE:
+	case CHANNEL_LEFT_BLUE:
         blue = brightness;
         break;
 
-    case CHANNEL_WHITE:
+	case CHANNEL_BOTH_WHITE:
+	case CHANNEL_RIGHT_WHITE:
+	case CHANNEL_LEFT_WHITE:
         red = brightness;
         green = brightness;
         blue = brightness;
         break;
 
     default:  // Ignore all others
-        return 0;
+        return;
     }
 
-    for (int i = 0; i < NUM_PIXELS; i++)
-    {
-        right_strip.setPixelColor(i, red, green, blue);
-    }
+	switch (channel)
+	{
+	case CHANNEL_BOTH_RED:
+	case CHANNEL_BOTH_GREEN:
+	case CHANNEL_BOTH_BLUE:
+	case CHANNEL_BOTH_WHITE:
+		for (int i = 0; i < NUM_PIXELS; i++)
+		{
+			right_strip.setPixelColor(i, red, green, blue);
+			left_strip.setPixelColor(i, red, green, blue);
+		}
+		break;
+
+	case CHANNEL_RIGHT_RED:
+	case CHANNEL_RIGHT_GREEN:
+	case CHANNEL_RIGHT_BLUE:
+	case CHANNEL_RIGHT_WHITE:
+		for (int i = 0; i < NUM_PIXELS; i++)
+		{
+			right_strip.setPixelColor(i, red, green, blue);
+		}		
+		break;
+
+	case CHANNEL_LEFT_RED:
+	case CHANNEL_LEFT_GREEN:
+	case CHANNEL_LEFT_BLUE:
+	case CHANNEL_LEFT_WHITE:
+		for (int i = 0; i < NUM_PIXELS; i++)
+		{
+			left_strip.setPixelColor(i, red, green, blue);
+		}
+		break;
+
+	default:
+		// Ignore
+		break;
+	}  
+}
+
+uint32_t GetCurrentPixelColor(byte channel, byte note)
+{
+	switch (channel)
+	{
+	case CHANNEL_BOTH_RED:     // When reading current color from "both", assume RIGHT
+	case CHANNEL_BOTH_GREEN:
+	case CHANNEL_BOTH_BLUE:
+	case CHANNEL_BOTH_WHITE:
+	case CHANNEL_RIGHT_RED:
+	case CHANNEL_RIGHT_GREEN:
+	case CHANNEL_RIGHT_BLUE:
+	case CHANNEL_RIGHT_WHITE:
+		return right_strip.getPixelColor(note);
+		break;
+
+	case CHANNEL_LEFT_RED:
+	case CHANNEL_LEFT_GREEN:
+	case CHANNEL_LEFT_BLUE:
+	case CHANNEL_LEFT_WHITE:
+		return left_strip.getPixelColor(note);
+		break;
+
+	default:
+		return 0;
+	}
+}
+
+void SetPixelColor(byte channel, byte note, byte red, byte green, byte blue)
+{
+	switch (channel)
+	{
+	case CHANNEL_BOTH_RED:
+	case CHANNEL_BOTH_GREEN:
+	case CHANNEL_BOTH_BLUE:
+	case CHANNEL_BOTH_WHITE:
+		right_strip.setPixelColor(note, red, green, blue);
+		left_strip.setPixelColor(note, red, green, blue);
+		break;
+
+	case CHANNEL_RIGHT_RED:
+	case CHANNEL_RIGHT_GREEN:
+	case CHANNEL_RIGHT_BLUE:
+	case CHANNEL_RIGHT_WHITE:
+		right_strip.setPixelColor(note, red, green, blue);
+		break;
+
+	case CHANNEL_LEFT_RED:
+	case CHANNEL_LEFT_GREEN:
+	case CHANNEL_LEFT_BLUE:
+	case CHANNEL_LEFT_WHITE:
+		left_strip.setPixelColor(note, red, green, blue);
+		break;
+
+	default:
+		// Ignore
+		break;
+	}
 }
 
 void StartupPulse()
 {
-    ClearAllPixels();
+	ClearAllPixels();
 
-    for (int i = 0; i < NUM_PIXELS; i++)
-    {
-        right_strip.setPixelColor(i, 255, 255, 255);
-        PixelRefresh();
-        delay(10);
-        right_strip.setPixelColor(i, 0, 0, 0);
-    }
+	for (int i = 0; i < NUM_PIXELS; i++)
+	{
+		SetPixelColor(CHANNEL_BOTH_WHITE, i, 255, 255, 255);
+		PixelRefresh();
+		delay(20);
+		SetPixelColor(CHANNEL_BOTH_WHITE, i, 0, 0, 0);
+	}
 
-    for (int i = 0; i < NUM_PIXELS; i++)
-    {
-        left_strip.setPixelColor(i, 255, 255, 255);
-        PixelRefresh();
-        delay(10);
-        left_strip.setPixelColor(i, 0, 0, 0);
-    }
-        
-    ClearAllPixels();
+	ClearAllPixels();
 }
 
 void ClearAllPixels()
 {
-    left_strip.clear();
-    right_strip.clear();
-    PixelRefresh();
+	left_strip.clear();
+	right_strip.clear();
+	PixelRefresh();
 }
 
 // EOF

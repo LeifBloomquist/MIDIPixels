@@ -3,11 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
 VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MIDIPixelMaster", "MIDIPixelMaster\MIDIPixelMaster.vcxproj", "{0FFD72EB-68B1-419E-9CCB-FAE61A436B7C}"
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MIDIPixelSlave", "MIDIPixelSlave\MIDIPixelSlave.vcxproj", "{C5F80730-F44F-4478-BDAE-6634EFC2CA88}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MIDIPixels-REMOVE", "MIDIPixels\MIDIPixels.vcxproj", "{0B470771-0D6D-42B8-BBD7-E5A21A7DCB43}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MIDIPixelMaster", "MIDIPixelMaster\MIDIPixelMaster.vcxproj", "{0FFD72EB-68B1-419E-9CCB-FAE61A436B7C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,18 +13,14 @@ Global
 		Release|Win32 = Release|Win32
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{0FFD72EB-68B1-419E-9CCB-FAE61A436B7C}.Debug|Win32.ActiveCfg = Debug|Win32
-		{0FFD72EB-68B1-419E-9CCB-FAE61A436B7C}.Debug|Win32.Build.0 = Debug|Win32
-		{0FFD72EB-68B1-419E-9CCB-FAE61A436B7C}.Release|Win32.ActiveCfg = Release|Win32
-		{0FFD72EB-68B1-419E-9CCB-FAE61A436B7C}.Release|Win32.Build.0 = Release|Win32
 		{C5F80730-F44F-4478-BDAE-6634EFC2CA88}.Debug|Win32.ActiveCfg = Debug|Win32
 		{C5F80730-F44F-4478-BDAE-6634EFC2CA88}.Debug|Win32.Build.0 = Debug|Win32
 		{C5F80730-F44F-4478-BDAE-6634EFC2CA88}.Release|Win32.ActiveCfg = Release|Win32
 		{C5F80730-F44F-4478-BDAE-6634EFC2CA88}.Release|Win32.Build.0 = Release|Win32
-		{0B470771-0D6D-42B8-BBD7-E5A21A7DCB43}.Debug|Win32.ActiveCfg = Debug|Win32
-		{0B470771-0D6D-42B8-BBD7-E5A21A7DCB43}.Debug|Win32.Build.0 = Debug|Win32
-		{0B470771-0D6D-42B8-BBD7-E5A21A7DCB43}.Release|Win32.ActiveCfg = Release|Win32
-		{0B470771-0D6D-42B8-BBD7-E5A21A7DCB43}.Release|Win32.Build.0 = Release|Win32
+		{0FFD72EB-68B1-419E-9CCB-FAE61A436B7C}.Debug|Win32.ActiveCfg = Debug|Win32
+		{0FFD72EB-68B1-419E-9CCB-FAE61A436B7C}.Debug|Win32.Build.0 = Debug|Win32
+		{0FFD72EB-68B1-419E-9CCB-FAE61A436B7C}.Release|Win32.ActiveCfg = Release|Win32
+		{0FFD72EB-68B1-419E-9CCB-FAE61A436B7C}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

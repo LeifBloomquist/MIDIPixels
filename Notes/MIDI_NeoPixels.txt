@@ -1,5 +1,4 @@
-Pixels/Notes 0-59 are on Right Arm
-Pixels/Notes 60-119 are on Left Arm
+Pixels/Notes 0-59 on Either Arm
 
 -----------------------------------------------------------------------------------------------------
 

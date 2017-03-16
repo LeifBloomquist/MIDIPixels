@@ -1,0 +1,62 @@
+*Pick And Place List
+*Company=
+*Author=
+*eMail=
+*
+*Project=MIDIPixelBoard R9
+*Date=00:18:59
+*CreatedBy=Fritzing 0.9.3b.04.19.5c895d327c44a3114e5fcc9d8260daf0cbb52806
+*
+*
+*Coordinates in mm, always center of component
+*Origin 0/0=Lower left corner of PCB
+*Rotation in degree (0-360, math. pos.)
+*
+*No;Value;Package;X;Y;Rotation;Side;Name
+1;;;82.0462;-44.9954;0;Bottom;TXT2
+2;;;82.0479;-12.6393;0;Bottom;TXT2
+3;;;5.53005;-7.19813;90;Bottom;TXT3
+4;;;42.47;-45.4155;0;Bottom;TXT1
+5;;;80.2404;-3.10899;0;Bottom;Hole4
+6;;THT;42.2577;-32.0125;0;Bottom;Sensors
+7;;;25.0669;-22.0061;90;Bottom;TXT1
+8;;;44.9305;-36.8751;0;Bottom;TXT3
+9;;;41.7598;-48.1715;0;Bottom;TXT1
+10;330;THT;13.6833;-37.0248;90;Bottom;R2
+11;;;44.8436;-31.7345;0;Bottom;TXT3
+12;;;82.0473;-30.6254;0;Bottom;TXT2
+13;;;44.8724;-42.0406;0;Bottom;TXT3
+14;;THT;77.7491;-19.362;0;Bottom;Right Power
+15;;;25.3184;-21.6785;180;Bottom;MIDI Processor
+16;;;1.323;-44.8375;0;Bottom;TXT2
+17;;;80.2404;-48.5379;0;Bottom;Hole2
+18;;THT;5.86712;-19.108;180;Bottom;Left Power
+19;;;8.14766;-7.19248;90;Bottom;TXT3
+20;;;42.88;-26.9194;0;Bottom;IMG1
+21;;THT;5.86712;-36.888;180;Bottom;Left Data
+22;;;44.8724;-24.1348;0;Bottom;TXT3
+23;;;2.86398;-6.90264;90;Bottom;TXT3
+24;;;35.7471;-2.81714;0;Bottom;TXT2
+25;;;3.39353;-48.5379;0;Bottom;Hole1
+26;;;37.3631;-34.475;0;Bottom;Via1
+27;;;82.0467;-27.0093;0;Bottom;TXT2
+28;;;44.9305;-39.5172;0;Bottom;TXT3
+29;330;THT;69.9787;-37.0248;-90;Bottom;R1
+30;1mF;100 mil [THT, electrolytic];42.2577;-16.4836;0;Bottom;C1
+31;;;76.9933;-8.25088;0;Bottom;TXT2
+32;;;25.0258;-2.05582;0;Bottom;TXT2
+33;;;44.8724;-34.1443;0;Bottom;TXT3
+34;;;44.8436;-29.1901;0;Bottom;TXT3
+35;;THT;77.7491;-37.142;0;Bottom;Right Data
+36;;;1.51124;-30.5307;0;Bottom;TXT2
+37;;;58.4993;-22.0061;90;Bottom;TXT1
+38;;THT;42.2577;-5.39197;90;Bottom;Power In
+39;;;1.19543;-12.7816;0;Bottom;TXT2
+40;;;44.8145;-26.6898;0;Bottom;TXT3
+41;;;45.3816;-21.6431;0;Bottom;TXT3
+42;;;58.3717;-44.1656;0;Bottom;TXT3
+43;;THT;5.61312;-10.345;90;Bottom;Data
+44;;;1.19656;-26.7724;0;Bottom;TXT2
+45;;;48.3799;-2.69099;0;Bottom;TXT2
+46;;;3.39353;-3.10899;0;Bottom;Hole3
+47;;;58.6669;-21.6785;180;Bottom;NeoPixel Controller
