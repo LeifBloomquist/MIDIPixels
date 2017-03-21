@@ -3,9 +3,9 @@
 
 // MIDI "SLAVE!"  This Arduino controls the NeoPixels.
 
-#include <Adafruit_NeoPixel.h>
 #include <SoftwareSerial.h> 
 #include <digitalWriteFast.h>
+#include <Adafruit_NeoPixel.h>
 
 #define RX_PIN        8
 #define TX_PIN        9
@@ -31,7 +31,6 @@
 #define CHANNEL_LEFT_BLUE   10  // MIDI Channel 11
 #define CHANNEL_LEFT_WHITE  11  // MIDI Channel 12
 
-
 #define CC_BRIGHTNESS 74
 
 // Parameter 1 = number of pixels in strip
@@ -50,13 +49,11 @@ SoftwareSerial softSerial(RX_PIN, TX_PIN); // RX, TX
 
 void setup()
 {
-    MIDIsetup();
     left_strip.begin();
     right_strip.begin();
     PixelRefresh();
 
-    Serial.begin(115200);
-    softSerial.begin(57600);
+	softSerial.begin(57600);
 
     pinModeFast(SIGNAL_PIN, OUTPUT);
     digitalWriteFast(SIGNAL_PIN, HIGH);
@@ -87,13 +84,13 @@ void loop()
     byte status = softSerial.read();
     byte data1  = softSerial.read();
     byte data2  = softSerial.read();
-    
-    HandleMIDI(status, data1, data2);
+
+	HandleMIDI(status, data1, data2);
 
     // 5. Refresh the NeoPixels while no data is coming in
     PixelRefresh();
       
-    // 6. GOTO 1
+    // 6. GOTO 1	
 }
 
 // ----------------------------------------------------------------------------
@@ -102,11 +99,6 @@ inline void PixelRefresh()
 {
     left_strip.show();
     right_strip.show();
-}
-
-void MIDIsetup()
-{
-    Serial.begin(115200);
 }
 
 inline void HandleMIDI(byte status, byte data1, byte data2)
