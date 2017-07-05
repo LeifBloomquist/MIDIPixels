@@ -1,0 +1,69 @@
+*Pick And Place List
+*Company=
+*Author=
+*eMail=
+*
+*Project=MIDIPixelBoard R13
+*Date=22:37:37
+*CreatedBy=Fritzing 0.9.3b.04.19.5c895d327c44a3114e5fcc9d8260daf0cbb52806
+*
+*
+*Coordinates in mm, always center of component
+*Origin 0/0=Lower left corner of PCB
+*Rotation in degree (0-360, math. pos.)
+*
+*No;Value;Package;X;Y;Rotation;Side;Name
+1;;;1.19656;-27.2257;0;Bottom;TXT2
+2;;;58.0252;-21.9879;0;Bottom;NeoPixel Controller
+3;;;27.5178;-14.358;0;Bottom;Via7
+4;1mF;100 mil [THT, electrolytic];41.5152;-16.9164;0;Bottom;C1
+5;;THT;3.66917;-19.3294;180;Bottom;Left Power
+6;;THT;3.66917;-37.1094;180;Bottom;Left Data
+7;;;45.3252;-10.5664;0;Bottom;Via10
+8;;;44.0774;-43.2847;0;Bottom;TXT3
+9;;;79.6153;-2.94628;0;Bottom;Hole4
+10;;;47.9139;-0.537768;0;Bottom;TXT2
+11;;;44.1524;-40.8305;0;Bottom;TXT3
+12;;;1.27925;-30.5201;0;Bottom;TXT2
+13;;;34.9721;-0.612839;0;Bottom;TXT2
+14;;;1.207;-44.7689;0;Bottom;TXT2
+15;;;81.6988;-27.1727;0;Bottom;TXT2
+16;;;3.41526;-48.6664;0;Bottom;Hole1
+17;;;41.4937;-13.0821;0;Bottom;Via8
+18;;;23.7828;-44.7686;0;Bottom;TXT3
+19;;;81.4098;-12.8029;0;Bottom;TXT2
+20;;;41.4937;-10.5887;0;Bottom;Via9
+21;;THT;41.5152;-33.4264;180;Bottom;Sensors
+22;;;44.1798;-30.7575;0;Bottom;TXT3
+23;;;41.4037;-27.1408;0;Bottom;IMG1
+24;;;44.1815;-38.2773;0;Bottom;TXT3
+25;;;81.7225;-45.4044;0;Bottom;TXT2
+26;;;44.2241;-28.3018;0;Bottom;TXT3
+27;;;57.3066;-45.0041;0;Bottom;TXT3
+28;;;27.5178;-8.03681;0;Bottom;Via3
+29;;;44.1815;-35.7682;0;Bottom;TXT3
+30;;;24.3583;-23.2051;90;Bottom;TXT1
+31;;;44.166;-33.2574;0;Bottom;TXT3
+32;;;9.30731;-10.4876;0;Bottom;TXT3
+33;;;81.6519;-30.7308;0;Bottom;TXT2
+34;;THT;79.3612;-19.5834;0;Bottom;Right Power
+35;;;24.535;-1.46386;0;Bottom;TXT2
+36;;;44.6752;-23.0614;0;Bottom;TXT3
+37;;;76.0654;-8.47228;0;Bottom;TXT2
+38;;;57.0605;-22.4465;90;Bottom;TXT1
+39;;;41.5421;-45.6369;0;Bottom;TXT1
+40;;;41.4937;-8.03681;0;Bottom;Via5
+41;;;25.0052;-21.9879;0;Bottom;MIDI Processor
+42;470;THT;12.3052;-37.2364;90;Bottom;R2
+43;;;44.2103;-25.7716;0;Bottom;TXT3
+44;;;8.77908;-5.15243;0;Bottom;TXT3
+45;;;9.29941;-7.99949;0;Bottom;TXT3
+46;;;40.8319;-48.3929;0;Bottom;TXT1
+47;;THT;12.3052;-8.02637;0;Bottom;Data
+48;;THT;79.3612;-37.3634;0;Bottom;Right Data
+49;;;27.5178;-11.8643;0;Bottom;Via6
+50;470;THT;70.7252;-37.2364;-90;Bottom;R1
+51;;;79.6153;-48.6664;0;Bottom;Hole2
+52;;THT;41.6422;-4.47037;90;Bottom;Power In
+53;;;3.41526;-2.94628;0;Bottom;Hole3
+54;;;1.54341;-12.9451;0;Bottom;TXT2

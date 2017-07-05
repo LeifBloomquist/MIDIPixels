@@ -3,6 +3,8 @@
 
 // MIDI "MASTER"!  This Arduino receives and buffers the MIDI to send to the Slave when it is ready
 
+#include <HardwareSerial.h>   // Needs #define SERIAL_RX_BUFFER_SIZE 256
+
 #include <SoftwareSerial.h> 
 #include <digitalWriteFast.h>
 
@@ -42,7 +44,7 @@ void loop()
     // 1. Wait for the signal from the slave (positive edge). 
     while (digitalRead(SIGNAL_PIN) == LOW) {}
 
-    digitalWriteFast(LED_PIN, HIGH);
+    digitalWriteFast(LED_PIN, LOW);  // On
 
     // 2. Wait for MIDI data (may already be buffered)
     while (true)
@@ -62,7 +64,7 @@ void loop()
     softSerial.write(data1);
     softSerial.write(data2);    
 
-    digitalWriteFast(LED_PIN, LOW);
+    digitalWriteFast(LED_PIN, HIGH);  // OFF
 
     // 3. GOTO 1
 }
