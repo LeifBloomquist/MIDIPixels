@@ -16,7 +16,7 @@
 #define LED_PIN       13
 
 #define NUM_PIXELS    60
-#define MAX_BRIGHTNESS 200
+#define MAX_BRIGHTNESS 140
 
 // Parameter 1 = number of pixels in strip
 // Parameter 2 = Arduino pin number (most are valid)
@@ -47,13 +47,17 @@ void loop()
     int effect = random(10);
 
     switch (effect)
-    {    
+    {  
     case 0:
-        Effect3();
+        Effect2();
         break;
 
     case 1:
-        Effect2();
+        Effect3();
+        break;
+
+    case 2:
+        Effect4();
         break;
 
     default:
@@ -124,6 +128,43 @@ void Effect3()
     digitalWriteFast(LED_PIN, LOW);
     delay(1000);
 }
+
+void Effect4()
+{
+    digitalWriteFast(LED_PIN, HIGH);
+
+    int num = random(1, 20);
+    
+    for (int i = 0; i < num; i++)
+    {
+        int pixel = random(NUM_PIXELS);
+        SetPixelColor(CHANNEL_BOTH, pixel, 0, 0, MAX_BRIGHTNESS);
+    }
+    PixelRefresh();
+
+    // Left arm
+    for (int i = NUM_PIXELS-1; i >= 0; i--)
+    {
+        uint32_t save = left_strip.getPixelColor(i);
+        SetPixelColor(CHANNEL_LEFT, i, MAX_BRIGHTNESS, 0, 0);
+        PixelRefresh();
+        delay(8);  // approx 1000/120
+        left_strip.setPixelColor(i, save);
+    }
+
+    // Right arm
+    for (int i = 0; i < NUM_PIXELS; i++)
+    {
+        uint32_t save = right_strip.getPixelColor(i);
+        SetPixelColor(CHANNEL_RIGHT, i, MAX_BRIGHTNESS, 0, 0);
+        PixelRefresh();
+        delay(8);  // approx 1000/120
+        right_strip.setPixelColor(i, save);
+    }
+
+    ClearAllPixels();
+}
+
 
 // ----------------------------------------------------------------------------
 
